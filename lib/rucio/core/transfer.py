@@ -429,6 +429,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
         transfer_src_type = "DISK"
         transfer_dst_type = "DISK"
         allow_tape_source = True
+        print "WWKK1.1", scope, name, adler32, "path:", path, dest_rse_id, source_rse_id, rse, src_url, attributes
         try:
             if rses and dest_rse_id not in rses:
                 continue
@@ -492,6 +493,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                 allow_tape_source = True
 
                 # Find matching scheme between destination and source
+                #print "WWKK2.1", rses_info[dest_rse_id]
+                #print "WWKK2.2", rses_info[source_rse_id], current_schemes
                 try:
                     matching_scheme = rsemgr.find_matching_scheme(rse_settings_dest=rses_info[dest_rse_id],
                                                                   rse_settings_src=rses_info[source_rse_id],
@@ -535,9 +538,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                     # compute dest url in case of non deterministic
                     # naming convention, etc.
                     dsn = 'other'
-                    if attr and 'ds_name' in attr:
+                    if attr and 'ds_name' in attr and attr['ds_name']:
                         dsn = attr["ds_name"]
-
                     else:
                         # select a containing dataset
                         for parent in did.list_parent_dids(scope, name):
@@ -551,7 +553,10 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                         if retry_count or activity == 'Recovery':
                             dest_path = '%s_%i' % (dest_path, int(time.time()))
 
-                    dest_url = list(protocols[dest_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': dest_path}).values())[0]
+                    print protocols[dest_rse_id_key], dest_rse_id_key
+                    #dest_url = list(protocols[dest_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': dest_path}).values())[0]
+                    dest_url = list(protocols[dest_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': path}).values())[0]
+                    print "WWKK3.1", dsn, name, naming_convention, dest_path, dest_url
 
                 # Get source protocol
                 source_rse_id_key = '%s_%s' % (source_rse_id, '_'.join([matching_scheme[0], matching_scheme[1]]))
@@ -567,7 +572,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                         continue
 
                 source_url = list(protocols[source_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': path}).values())[0]
-
+                print "WWKK3.2", source_url
+                
                 # Extend the metadata dictionary with request attributes
                 overwrite, bring_online = True, None
                 if rses_info[source_rse_id]['rse_type'] == RSEType.TAPE or rses_info[source_rse_id]['rse_type'] == 'TAPE':

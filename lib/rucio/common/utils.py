@@ -487,6 +487,15 @@ def construct_surl_BelleII(dsn, filename):
     else:
         return '%s/%s' % (dsn, filename)
 
+def construct_surl_LCLS(dsn, filename):
+    exper, ftype, base = filename.split('.', 2)
+    if ftype == 'xtc':
+        return "{}/{}/xtc/{}".format(exper[:3], exper, base)
+    elif ftype == 'smd':
+        return "{}/{}/xtc/smalldata/{}".format(exper[:3], exper, base)
+    else:
+        return None	
+
 
 def construct_surl(dsn, filename, naming_convention=None):
     if naming_convention == 'T0':
@@ -495,6 +504,8 @@ def construct_surl(dsn, filename, naming_convention=None):
         return construct_surl_DQ2(dsn, filename)
     elif naming_convention == 'BelleII':
         return construct_surl_BelleII(dsn, filename)
+    elif naming_convention == 'LCLS':
+        return construct_surl_LCLS(dsn, filename)
 
     return construct_surl_DQ2(dsn, filename)
 

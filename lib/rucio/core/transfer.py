@@ -493,8 +493,6 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                 allow_tape_source = True
 
                 # Find matching scheme between destination and source
-                #print "WWKK2.1", rses_info[dest_rse_id]
-                #print "WWKK2.2", rses_info[source_rse_id], current_schemes
                 try:
                     matching_scheme = rsemgr.find_matching_scheme(rse_settings_dest=rses_info[dest_rse_id],
                                                                   rse_settings_src=rses_info[source_rse_id],
@@ -554,8 +552,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                             dest_path = '%s_%i' % (dest_path, int(time.time()))
 
                     print protocols[dest_rse_id_key], dest_rse_id_key
-                    #dest_url = list(protocols[dest_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': dest_path}).values())[0]
-                    dest_url = list(protocols[dest_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': path}).values())[0]
+                    dest_url = list(protocols[dest_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': dest_path}).values())[0]
                     print "WWKK3.1", dsn, name, naming_convention, dest_path, dest_url
 
                 # Get source protocol
@@ -572,8 +569,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                         continue
 
                 source_url = list(protocols[source_rse_id_key].lfns2pfns(lfns={'scope': scope, 'name': name, 'path': path}).values())[0]
-                print "WWKK3.2", source_url
-                
+                print "WWKK3.2", source_url, matching_scheme
+	 
                 # Extend the metadata dictionary with request attributes
                 overwrite, bring_online = True, None
                 if rses_info[source_rse_id]['rse_type'] == RSEType.TAPE or rses_info[source_rse_id]['rse_type'] == 'TAPE':
@@ -611,6 +608,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                     else:
                         verify_checksum = 'both'
 
+                print "WWKK3.4", fts_list, verify_checksum
                 external_host = fts_list[0]
                 if retry_other_fts:
                     external_host = fts_list[retry_count % len(fts_list)]
@@ -631,9 +629,11 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                                  'adler32': adler32,
                                  'verify_checksum': verify_checksum}
 
+                print "WWKK4.0", file_metadata  
                 if previous_attempt_id:
                     file_metadata['previous_attempt_id'] = previous_attempt_id
 
+                print "WWKK4.1", current_schemes, matching_scheme
                 transfers[req_id] = {'request_id': req_id,
                                      'schemes': __add_compatible_schemes(schemes=[matching_scheme[0]], allowed_schemes=current_schemes),
                                      # 'src_urls': [source_url],
@@ -650,7 +650,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                                      'file_metadata': file_metadata}
             else:
                 current_schemes = transfers[req_id]['schemes']
-
+                print "WWKK5.0", current_schemes
                 # source_rse_id will be None if no source replicas
                 # rse will be None if rse is staging area
                 if source_rse_id is None or rse is None:
@@ -934,7 +934,7 @@ def __add_compatible_schemes(schemes, allowed_schemes):
     :param allowed_schemes:   Allowed schemes, only these can be in the output.
     :returns:                 List of schemes
     """
-
+    
     return_schemes = []
     for scheme in schemes:
         if scheme in allowed_schemes:

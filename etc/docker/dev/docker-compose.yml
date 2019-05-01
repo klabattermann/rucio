@@ -9,6 +9,10 @@ services:
       - graphite:graphite
     volumes:
       - ../../../../rucio/:/opt/rucio/
+      - /etc/grid-security:/etc/grid-security
+      - /home/wilko/github/klabattermann/psdme-rucio:/opt/wk
+      - /home/wilko/data:/reg/d/psdm
+      - /home/wilko/cfg:/opt/cfg
   mysql:
     image: mysql/mysql-server:5.7
     environment:

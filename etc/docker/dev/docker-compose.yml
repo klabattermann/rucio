@@ -8,7 +8,9 @@ services:
       - mysql:mysql
       - graphite:graphite
     volumes:
-      - ../../../../rucio/:/opt/rucio/
+      - ../../../tools:/opt/rucio/tools
+      - ../../../bin:/opt/rucio/bin
+      - ../../../lib:/opt/rucio/lib
       - /etc/grid-security:/etc/grid-security
       - /home/wilko/github/klabattermann/psdme-rucio:/opt/wk
       - /home/wilko/data:/reg/d/psdm

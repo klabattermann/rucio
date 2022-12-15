@@ -570,6 +570,36 @@ def construct_surl_T0(dsn: str, scope: str, filename: str) -> str:
         return '/other/other/other/other/%s' % (filename)
 
 
+def construct_surl_LCLS(dsn: str, scope: str, filename: str) -> str:
+    """
+    Defines relative SURL for replicas. This method uses the LCLS convention
+    for xtc files. To be used for non-deterministic sites.
+
+    @return: relative SURL for new replica.
+    @rtype: str
+    """
+    print("WKWK surl dsn:", dsn, "scope:", scope, "fn:", filename)
+
+    if dsn == "xtc":
+        if dsn == 'xtc' and filename.find('smd.xtc') > 0:
+            return '/%s/%s/%s/smalldata/%s' % (scope[:3], scope, dsn, filename)
+        return '/%s/%s/%s/%s' % (scope[:3], scope, dsn, filename)
+
+    try:
+        instr, expt, fld, remain = filename.split('.', 3)
+    except ValueError:
+        use_hash = True
+    else:
+        use_hash = False if fld in ('xtc', 'hdf5') else True
+
+    if use_hash:
+        md5 = hashlib.md5(filename.encode()).hexdigest()
+        return '/hash/%s/%s' % (md5[:3], filename)
+    else:
+        if fld == 'xtc' and filename.endswith('smd.xtc'):
+            return '/%s/%s/xtc/smalldata/%s' % (instr, expt, remain)
+        return '/%s/%s/%s/%s' % (instr, expt, fld, remain)
+
 def construct_surl_BelleII(dsn: str, scope: str, filename: str) -> str:
     """
     Defines relative SURL for Belle II specific replicas.
@@ -588,7 +618,7 @@ def construct_surl_BelleII(dsn: str, scope: str, filename: str) -> str:
 
 
 _SURL_ALGORITHMS = {}
-_DEFAULT_SURL = 'DQ2'
+_DEFAULT_SURL = 'LCLS'
 _loaded_policy_modules = False
 
 
@@ -601,7 +631,7 @@ def register_surl_algorithm(surl_callable, name=None):
 register_surl_algorithm(construct_surl_T0, 'T0')
 register_surl_algorithm(construct_surl_DQ2, 'DQ2')
 register_surl_algorithm(construct_surl_BelleII, 'BelleII')
-
+register_surl_algorithm(construct_surl_LCLS, 'LCLS')
 
 def construct_surl(dsn: str, scope: str, filename: str, naming_convention: str = None) -> str:
     """

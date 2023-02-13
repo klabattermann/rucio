@@ -259,6 +259,7 @@ def build_job_params(transfer_path, bring_online, default_lifetime, archive_time
     if last_hop.dst.rse.is_tape():
         overwrite = False
 
+
     # Get dest space token
     dest_protocol = last_hop.protocol_factory.protocol(last_hop.dst.rse, last_hop.dst.scheme, last_hop.operation_dest)
     dest_spacetoken = None
@@ -269,9 +270,12 @@ def build_job_params(transfer_path, bring_online, default_lifetime, archive_time
     strict_copy = last_hop.dst.rse.attributes.get('strict_copy', False)
     archive_timeout = last_hop.dst.rse.attributes.get('archive_timeout', None)
 
+    print("WKKTRANS isTape/artimeout", transfer.dst.rse.is_tape(), archive_timeout)
+
     job_params = {'account': last_hop.rws.account,
                   'verify_checksum': _path_checksum_validation_strategy(transfer_path, logger=logger),
                   'copy_pin_lifetime': last_hop.rws.attributes.get('lifetime', default_lifetime),
+
                   'bring_online': bring_online_local,
                   'job_metadata': {
                       'issuer': 'rucio',
@@ -403,6 +407,8 @@ def bulk_group_transfers(transfer_paths, policy='rule', group_bulk=200, source_s
                 grouped_transfers[group_key] = {'transfers': [], 'job_params': job_params}
             grouped_transfers[group_key]['transfers'].append(transfer)
 
+    print("WK PPPP", grouped_transfers)
+    print("WK PPPP", grouped_transfers.values())
     # split transfer groups to have at most group_bulk elements in each one
     for group in grouped_transfers.values():
         job_params = group['job_params']
@@ -925,6 +931,7 @@ class FTS3Transfertool(Transfertool):
         params_dict = {'files': files, 'params': job_params}
         params_str = json.dumps(params_dict, cls=APIEncoder)
 
+        print("WKJJSS", job_params)
         post_result = None
         stopwatch = Stopwatch()
         try:

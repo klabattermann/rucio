@@ -81,9 +81,13 @@ def _get_possible_protocols(rse_settings, operation, scheme=None, domain=None, i
     operation = operation.lower()
     candidates = rse_settings['protocols']
 
+    print("WWK", candidates)
+
     # convert scheme to list, if given as string
     if scheme and not isinstance(scheme, list):
         scheme = scheme.split(',')
+
+    print("WWK", scheme)
 
     tbr = []
     for protocol in candidates:

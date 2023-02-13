@@ -218,6 +218,8 @@ class RSEClient(BaseClient):
         scheme = params['scheme']
         path = '/'.join([self.RSE_BASEURL, rse, 'protocols', scheme])
         url = build_url(choice(self.list_hosts), path=path)
+        print("WKWKW", scheme, path)
+
         r = self._send_request(url, type_='POST', data=dumps(params))
         if r.status_code == codes.created:
             return True

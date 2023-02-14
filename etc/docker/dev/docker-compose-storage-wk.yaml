@@ -28,7 +28,8 @@ services:
       - "127.0.0.1:61613:61613"
       - "127.0.0.1:2222:22"
     volumes:
-      - /home/wilko/gitrepos/github/klabattermann/psdme-rucio:/home
+      #- /home/wilko/gitrepos/github/klabattermann/psdme-rucio:/home
+      - ${PSDME_DIR}:/home
       - ../../../tools:/opt/rucio/tools:Z
       - ../../../bin:/opt/rucio/bin:Z
       - ../../../lib:/opt/rucio/lib:Z
@@ -88,9 +89,10 @@ services:
     network_mode: "service:rucio"
     environment:
       - XRDPORT=1097
-    entrypoint: /home/start_xrd.sh
+    entrypoint: /home/xrd/start_xrd.sh
     volumes:
-      - /home/wilko/gitrepos/github/klabattermann/psdme-rucio/local:/home
+      #- /home/wilko/gitrepos/github/klabattermann/psdme-rucio/local:/home
+      - ${PSDME_DIR}:/home
       - ../../certs/hostcert_xrd4.pem:/tmp/xrdcert.pem:Z
       - ../../certs/hostcert_xrd4.key.pem:/tmp/xrdkey.pem:Z
   minio:

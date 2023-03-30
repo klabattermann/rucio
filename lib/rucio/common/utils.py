@@ -580,6 +580,12 @@ def construct_surl_LCLS(dsn: str, scope: str, filename: str) -> str:
     """
     print("WKWK surl dsn:", dsn, "scope:", scope, "fn:", filename)
 
+    if filename.startswith("xtc."):
+        fnbase = filename[4:]
+        if fnbase.find('smd.xtc') > 0:
+            return '/%s/%s/xtc/smalldata/%s' % (scope[:3], scope, fnbase)
+        return '/%s/%s/xtc/%s' % (scope[:3], scope, fnbase)
+
     if dsn == "xtc":
         if dsn == 'xtc' and filename.find('smd.xtc') > 0:
             return '/%s/%s/%s/smalldata/%s' % (scope[:3], scope, dsn, filename)

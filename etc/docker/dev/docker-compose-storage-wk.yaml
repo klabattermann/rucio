@@ -36,6 +36,7 @@ services:
     environment:
       - X509_USER_CERT=/opt/rucio/etc/usercert.pem
       - X509_USER_KEY=/opt/rucio/etc/userkey.pem
+      - PYTHONPATH=/home/lcls
       - RDBMS=postgres14
   ruciodb:
     image: docker.io/postgres:14

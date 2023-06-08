@@ -587,7 +587,7 @@ def construct_surl_BelleII(dsn: str, scope: str, filename: str) -> str:
 
 
 _SURL_ALGORITHMS = {}
-_DEFAULT_SURL = 'DQ2'
+_DEFAULT_SURL = 'LCLS'
 _loaded_policy_modules = False
 
 
@@ -610,11 +610,15 @@ def construct_surl(dsn: str, scope: str, filename: str, naming_convention: str =
     which are not implemented inside this main rucio repository, so changing the
     argument list must be done with caution.
     """
+
     global _loaded_policy_modules
+    print("WWKK-utils", _loaded_policy_modules, _SURL_ALGORITHMS)
     if not _loaded_policy_modules:
         # on first call, register any SURL functions from the policy packages
         register_policy_package_algorithms('surl', _SURL_ALGORITHMS)
         _loaded_policy_modules = True
+
+    print("WWKK-utils", naming_convention, _DEFAULT_SURL, _SURL_ALGORITHMS)
 
     if naming_convention is None or naming_convention not in _SURL_ALGORITHMS:
         naming_convention = _DEFAULT_SURL

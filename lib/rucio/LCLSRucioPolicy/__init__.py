@@ -1,7 +1,7 @@
 
 from .path_names import construct_surl_LCLS
 
-SUPPORTED_VERSION="1.30"
+SUPPORTED_VERSION="1.33"
 
 
 def get_algorithms():
